@@ -1,0 +1,59 @@
+<!-- Output of test_xml.py -->
+
+<root>
+  <bar id="bar1">
+    <group id="group1">
+      <img id="img1">
+        <ref>Susan-B-Anthony.jpeg</ref>
+      </img>
+      <menu_item id="item1">
+        <label>Susan B. Anthony</label>
+      </menu_item>
+    </group>
+    <group id="group2">
+      <menu_item id="item2">
+        <label>About Me</label>
+      </menu_item>
+      <menu_item id="item3">
+        <label>Projects</label>
+      </menu_item>
+      <menu_item id="item4">
+        <label>Contact</label>
+      </menu_item>
+    </group>
+  </bar>
+  <card id="card1">
+    <group id="group3">
+      <img id="img2">
+        <ref>Susan-B-Anthony.jpeg</ref>
+      </img>
+      <title id="title1">
+        <label>Susan&amp;apos;s Home Page</label>
+      </title>
+    </group>
+    <group id="group4">
+      <title id="title2">
+        <label>Bio</label>
+      </title>
+      <text id="text1">
+        <label>Lorem ipsum dolor sit amet</label>
+      </text>
+    </group>
+  </card>
+  <card id="card2">
+    <group id="group5">
+      <title id="title3">
+        <label>Contact</label>
+      </title>
+      <text id="text2">
+        <label>Email: Susan@Anthony.com</label>
+      </text>
+    </group>
+  </card>
+  <interactions id="interactions">
+    <interaction source="item1" target="#card1"/>
+    <interaction source="item2" target="#card1"/>
+    <interaction source="item3" target="https://github.com/"/>
+    <interaction source="item4" target="#card2"/>
+  </interactions>
+</root>
