@@ -1,0 +1,18 @@
+<!-- Output of test_xml.py -->
+
+<root>
+  <bar id="bar1">
+      <title id="title" type="title" style="centerTitle:false, backgroundColor: blue">
+        <label>Susan B. Anthony</label>
+      </title>
+      <menu_item id="item1" type="text" style="color: green">
+        <label>About Me</label>
+      </menu_item>
+      <menu_item id="item2" type="text">
+        <label>Projects</label>
+      </menu_item>
+      <menu_item id="item3" type="text">
+        <label>Contact</label>
+      </menu_item>
+  </bar>
+</root>

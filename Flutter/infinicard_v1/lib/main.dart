@@ -15,8 +15,20 @@ class MainApp extends StatelessWidget {
   Widget build(BuildContext context) {
     var uiXML = getXML();
     var UIElements = buildXML(uiXML);
-    var UI = Column(crossAxisAlignment:CrossAxisAlignment.start, children:UIElements["children"]);
+    var UI = Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: UIElements["children"]);
 
-    return MaterialApp(home: UI);
+    return MaterialApp(
+      theme: ThemeData(
+        textTheme: TextTheme(
+          displayLarge: TextStyle(color: Colors.yellow, fontFamily: "Roboto", fontSize: 20),
+        ),
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.pink),
+      ),
+      home: Builder(builder: (context) {
+        return UI;
+      }),
+    );
   }
 }

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-getTextStyle(params){
+InfinicardTextStyle(params){
 
   final List<String> argNames = ["color","fontSize", "fontWeight", "fontFamily"];
 

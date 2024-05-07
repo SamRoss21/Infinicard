@@ -1,20 +1,24 @@
 import 'package:flutter/material.dart';
 
-class TextElement extends StatefulWidget {
-  final String type;
-  final String id;
-  final Color color;
-  final String text;
+class TextElement extends StatelessWidget {
+  final String? type;
+  final String? id;
+  final Color? textcolor;
+  final String? text;
+  final double? textsize;
+  const TextElement({this.textcolor, this.text, this.textsize, this.type = "text", this.id = "text"});
 
-  TextElement(this.type, this.id, this.color, this.text);
-
-  @override
-  _TextElementState createState() => _TextElementState();
+factory TextElement.fromJSON(Map<String, dynamic> data){
+    final size = double.parse(data['textsize']);
+    final color = Color(int.parse(data['color']));
+  return TextElement(
+    textcolor: color,
+    textsize: size
+  );
 }
 
-class _TextElementState extends State<TextElement> {
-  @override
-  Widget build(BuildContext context) {
-    return Text(widget.text, style: TextStyle(color: widget.color,));
-  }
+@override 
+Widget build(BuildContext context){
+  return Text("hello", style: TextStyle(color: textcolor, fontSize: textsize));
+}
 }

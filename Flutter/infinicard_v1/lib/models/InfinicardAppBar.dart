@@ -35,6 +35,6 @@ class _InfinicardAppBarState extends State<InfinicardAppBar> {
     title:widget.args["title"], actions:widget.args["actions"],
     backgroundColor:widget.args["backgroundColor"], centerTitle:widget.args["centerTitle"], 
     toolbarHeight:widget.args["toolbarHeight"], leadingWidth:widget.args["leadingWidth"], 
-    toolbarTextStyle:widget.args["toolbarTextStyle"]);
+    toolbarTextStyle:widget.args["toolbarTextStyle"], titleTextStyle:widget.args["titleTextStyle"],);
   }
 }
