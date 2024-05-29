@@ -1,60 +1,50 @@
 import 'package:flutter/material.dart';
-import 'package:infinicard_v1/models/InfinicardTextButton.dart';
+import 'package:infinicard_v1/models/ICTextButton.dart';
+import 'package:infinicard_v1/functions/buildFromXml.dart';
+import 'package:infinicard_v1/functions/buildButtonStyle.dart';
+import 'package:infinicard_v1/functions/buildText.dart';
+
 import 'package:xml/xml.dart';
 
 import 'helpers.dart';
 
-Widget buildTextButton(XmlElement button){
-  var params = Map();
-  var containerHeight = 30.0;
-  var containerWidth = 100.0;
-
-  var properties = button.getElement("Properties");
+ICTextButton getTextButton(XmlElement button, BuildContext context){
+  var properties = button.getElement("properties");
   var propertiesList = properties != null ? properties.childElements : const Iterable.empty();
+
+  var textButton = ICTextButton();
 
   for (var property in propertiesList) {
     var type = property.name.toString();
     switch (type) {
-      case "height":
-        params['height'] = getHeight(property);
-        break;
-      case "width":
-        params['width'] = getWidth(property);
-        break;
-      case "label":
-        params['child'] = getText(property, TextStyle());
+      case "child":
+        textButton.setChild(getText(property.firstElementChild, context));
         break;
       case "onPressed":
-        params['onPressed'] = getOnPressed(property);
+        textButton.setAction(getAction(property));
         break;
-      case "textStyle":
-        params['textStyle'] = getTextStyle(property);
-        break;
+      case "size":
+        var size = getSize(property);
+        textButton.setSize(heightArg:size[0], widthArg:size[1]);
       case "buttonStyle":
-        var styleList = property.childElements; 
-        for(var style in styleList){
-          var styleType = style.name.toString();
-          switch(styleType){
-            case "backgroundColor":
-              params["backgroundColor"] = getColor(style);
-              break;
-            case "foregroundColor":
-              params['foregroundColor'] = getColor(style);
-              break;
-            default:
-              debugPrint("Tried to build unrecognized button style: $styleType");
-          }
-        }
-        break;
+        textButton.setStyle(getButtonStyle(property));
       default:
         debugPrint("Tried to build unrecognized button property: $type");
     }}
 
-  return Container(height:containerHeight, width:containerWidth, child:InfinicardTextButton(params));
+  return textButton;
   
 }
 
-Map getOnPressed(XmlElement onPressedElement){
+Widget buildTextButton(XmlElement button, BuildContext context){
+  var textButton = getTextButton(button, context);
+  var height = textButton.height;
+  var width = textButton.width;
+
+  return SizedBox(height: height, width: width, child: textButton.toFlutter(context));
+}
+
+Map getAction(XmlElement onPressedElement){
   var action = Map();
   action['type'] = null;
   action['target'] = null;

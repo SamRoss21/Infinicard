@@ -1,38 +1,38 @@
 import 'package:flutter/material.dart';
+import 'package:infinicard_v1/models/ICRow.dart';
+import 'package:infinicard_v1/models/ICObject.dart';
 import 'package:xml/xml.dart';
 
-import 'package:infinicard_v1/models/InfinicardRow.dart';
 import 'package:infinicard_v1/functions/buildFromXml.dart';
 import 'helpers.dart';
 
-Widget? buildRow(XmlElement child){
-  var params = Map();
-  List<Widget> children = [];
-  var rowChildren = child.getElement("Children");
+ICRow getRow(XmlElement child, BuildContext context){
+  List<ICObject> children = [];
+  var rowChildren = child.getElement("children");
   var rowChildList = rowChildren != null ? rowChildren.childElements : const Iterable.empty();
-  for(var rowChild in rowChildList){
-    var childElement = buildUIElement(rowChild);
+  for(XmlElement rowChild in rowChildList){
+    var childElement = getUIElement(rowChild, context);
     if(childElement != null) children.add(childElement);
   }
-  params["children"] = children;
+  
+  var row = ICRow(children);
 
-  var properties = child.getElement("Properties");
+  var properties = child.getElement("properties");
   var propertiesList = properties != null ? properties.childElements : const Iterable.empty();
   for(var property in propertiesList){
     var type = property.name.toString();
     switch (type) {
       case "mainAxisAlignment":
-        params["mainAxisAlignment"] = getMainAxisAlignment(property);
+        row.setMainAxisAlignment(getMainAxisAlignment(property));
         break;
       case "mainAxisSize":
-        params["mainAxisSize"] = getMainAxisSize(property);
+        row.setMainAxisSize(getMainAxisSize(property));
         break;
       case "crossAxisAlignment":
-        params["crossAxisAlignment"] = getCrossAxisAlignment(property);
+        row.setCrossAxisAlignment(getCrossAxisAlignment(property));
         break;
       default:
     }
   }
-  var row = children != [] ? InfinicardRow(params) : null;
   return row;
 }

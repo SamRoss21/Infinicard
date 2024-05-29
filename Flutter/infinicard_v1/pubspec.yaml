@@ -22,7 +22,7 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   assets:
-    - assets/Susan-B-Anthony.jpeg
+    - assets/images/
   fonts:
     - family: Garamond
       fonts:

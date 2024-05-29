@@ -1,34 +1,39 @@
 import 'package:flutter/material.dart';
 import 'package:xml/xml.dart';
 
-import 'package:infinicard_v1/models/InfinicardText.dart';
+import 'package:infinicard_v1/models/ICText.dart';
 import 'helpers.dart';
 
-Widget buildText(XmlElement text) {
-  var params = Map();
-  var properties = text.getElement("Properties");
-  var data = text.getElement("data");
-  var containerHeight = 60.0;
-  var containerWidth = 500.0;
+ICText getText(XmlElement textElement, BuildContext context) {
+  var properties = textElement.getElement("properties");
+  var data = textElement.getElement("data");
 
-  params['data'] = data != null ? getString(data) : null;
+  var text = ICText(getString(data));
 
   var propertiesList = properties != null ? properties.childElements : const Iterable.empty();
   for (var property in propertiesList) {
     var type = property.name.toString();
     switch (type) {
       case "textStyle":
-        params["style"] = getTextStyle(property);
+        text.setStyle(getTextStyle(property));
         break;
       case "textAlign":
-        params['textAlign'] = getTextAlign(property);
+        text.setAlign(getTextAlign(property));
         break;
+      case "size":
+        var size = getSize(property);
+        text.setSize(heightArg:size[0], widthArg:size[1]);
       default:
         debugPrint("Tried to build unrecognized type: $type");
     }
   }
-  return Container(
-      height: containerHeight,
-      width: containerWidth,
-      child: InfinicardText(params));
+  return text;
+}
+
+Widget buildText(XmlElement textElement, BuildContext context){
+  var text = getText(textElement, context);
+  var height = text.height;
+  var width = text.width;
+  
+  return SizedBox(width: width, height:height, child:text.toFlutter(context));
 }

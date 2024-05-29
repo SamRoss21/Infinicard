@@ -1,62 +1,59 @@
 import 'package:flutter/material.dart';
+import 'package:infinicard_v1/functions/buildText.dart';
+import 'package:infinicard_v1/models/ICColor.dart';
 import 'package:xml/xml.dart';
 
-import 'package:infinicard_v1/models/InfinicardAppBar.dart';
-import 'package:infinicard_v1/functions/buildTextButton.dart';
+import 'package:infinicard_v1/models/ICAppBar.dart';
+import 'package:infinicard_v1/functions/buildFromXml.dart';
 import 'helpers.dart';
 
-Widget buildBar(XmlElement bar){
-  var params = Map();
-  var properties = bar.getElement("Properties");
+ICAppBar getBar(XmlElement bar, BuildContext context){
+  var properties = bar.getElement("properties");
   var propertiesList = properties != null ? properties.childElements : const Iterable.empty();
-
-  var containerHeight = 0.0;
+  
+  var appBar = ICAppBar();
 
   //AppBar Properties
-  for(var property in propertiesList){
+  for(XmlElement property in propertiesList){
     var type = property.name.toString();
-    switch(type){
-      case "backgroundColor":
-        params["backgroundColor"] = getColor(property);
+    bool content = property.innerText != "";
+    switch([type, content]){
+      case ["backgroundColor", true]:
+        appBar.setBackgroundColor(ICColor(property.innerText));
         break;
-      case "toolbarHeight":
-        params["toolbarHeight"] = getHeight(property);
+      case ["toolbarHeight", true]:
+        appBar.setToolbarHeight(getHeight(property));
         break;
-      case "height":
-        containerHeight = getHeight(property); //Internal height understanding, may change XML structure later
+      case ["height", true]:
+        appBar.setHeight(getHeight(property));
         break;
-      case "textStyle":
-        break; //Can decide how best to handle, currently getting style in 'title' case
-      case "title":
-        var titleTextStyleElement = properties!.getElement("textStyle");
-        params['titleTextStyle'] = titleTextStyleElement != null ? getTextStyle(titleTextStyleElement) : TextStyle();
-        params["title"] = getText(property, params["titleTextStyle"]);
+      case ["text", true]:
+        appBar.setTitle(getText(property, context));
         break;
-      case "centerTitle":
-        params["centerTitle"] = getCenter(property);
+      case ["centerTitle", true]:
+        appBar.setCenterTitle(getCenter(property));
+        break;
+      case ["leading", true]:
+        if(property.firstElementChild != null){
+          XmlElement leading = property.firstElementChild as XmlElement;
+          appBar.setLeading(getUIElement(leading, context));}
+        break;
+      case ["actions", true]:
+        appBar.setActions(getActions(property, context));
         break;
       default:
         debugPrint("Tried to build unrecognized property: $type");
     }
+    
   }
+  return appBar;
+}
 
-  //AppBar Actions
-  var actionElements = bar.getElement('Actions');
-  var actionsList = actionElements != null ? actionElements.childElements : Iterable.empty();
-  List<Widget> actions = [];
 
-  for(var action in actionsList){
-    var type = action.name.toString();
-    switch(type){
-      case "TextButton":
-        var button = buildTextButton(action);
-        actions.add(button);
-        break;
-      default:
-        debugPrint("Tried to build unrecognized action item: $type");
-    }
-  }
-  params['actions'] = actions;
-  return Container(height:containerHeight, child:InfinicardAppBar(params));
-  
+
+Widget buildBar(XmlElement appBarElement, BuildContext context){
+  var bar = getBar(appBarElement, context);
+  var height = bar.toolbarHeight;
+
+  return SizedBox(height:height, child:bar.toFlutter(context));
 }

@@ -1,34 +1,28 @@
 import 'package:flutter/material.dart';
+import 'package:infinicard_v1/functions/buildApp.dart';
+import 'dart:io';
 
-import 'spec.dart';
-
-import 'functions/buildFromXml.dart';
 
 void main() {
+  
   runApp(MainApp());
 }
 
 class MainApp extends StatelessWidget {
   MainApp({super.key});
 
+  String getXML(String filename, String path) {
+    final File file = File('$path/$filename');
+    final xml = file.readAsStringSync();
+    return xml;
+  }
+
   @override
   Widget build(BuildContext context) {
-    var uiXML = getXML();
-    var UIElements = buildXML(uiXML);
-    var UI = Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: UIElements["children"]);
+    //[temp] change path to app document directory path
+    String path = "/Users/samhross/Library/Containers/com.example.infinicardV1/Data/Documents";
+    String uiXML = getXML('spec.xml', path);
 
-    return MaterialApp(
-      theme: ThemeData(
-        textTheme: TextTheme(
-          displayLarge: TextStyle(color: Colors.yellow, fontFamily: "Roboto", fontSize: 20),
-        ),
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.pink),
-      ),
-      home: Builder(builder: (context) {
-        return UI;
-      }),
-    );
+    return infinicardApp(uiXML);
   }
 }

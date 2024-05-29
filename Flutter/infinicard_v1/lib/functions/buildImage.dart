@@ -1,40 +1,41 @@
 import 'package:flutter/material.dart';
 import 'package:xml/xml.dart';
 
-import 'package:infinicard_v1/models/InfinicardImage.dart';
+import 'package:infinicard_v1/models/ICImage.dart';
 import 'helpers.dart';
 
-Widget buildImage(XmlElement image) {
-  var params = Map();
-  var containerHeight = 0.0;
-  var containerWidth = 0.0;
-  var properties = image.getElement("Properties");
-  var propertiesList = properties != null ? properties.childElements : const Iterable.empty();
+ICImage getImage(XmlElement imageElement, BuildContext context) {
+  var properties = imageElement.getElement("properties");
+  var path = imageElement.getElement("path");
 
-  for (var property in propertiesList) {
+  var image = ICImage(getImgPath(path));
+
+  var propertiesList = properties != null ? properties.childElements : const Iterable.empty();
+  for (XmlElement property in propertiesList) {
     var type = property.name.toString();
     switch (type) {
-      case "path":
-        params['path'] = getString(property);
-        break;
       case "altText":
-        params['semanticLabel'] = getString(property);
+        image.setAltText(getString(property));
         break;
-      case "height":
-        params['height'] = getHeight(property);
-        containerHeight = params['height'];
+      case "size":
+        var size = getSize(property);
+        image.setSize(heightArg:size[0], widthArg:size[1]);
         break;
-      case "width":
-        params['width'] = getWidth(property);
-        containerWidth = params['width'];
+      case "shape":
+        image.setShape(getString(property));
         break;
       default:
-        debugPrint("Tried to build unrecognized property: $type");
+        debugPrint("Tried to build unrecognized property: $type"); //switch to exception
     }
   }
 
-  return Container(
-      height: containerHeight,
-      width: containerWidth,
-      child: InfinicardImage(params));
+  return image;
+}
+
+Widget buildImage(XmlElement imageElement, BuildContext context){
+  var image = getImage(imageElement, context);
+  var height = image.height;
+  var width = image.width;
+
+  return SizedBox(height: height, width: width, child: image.toFlutter(context));
 }
